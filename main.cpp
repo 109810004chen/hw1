@@ -1,52 +1,78 @@
 #include <iostream>
+#include <cmath>
+#include <stdexcept>
+
 using namespace std;
-#include <stdlib.h>
-#include <string.h>
-#include "shapes.h"
 
-const char *usage = "Usage: a.out [type] [num1] [num2] \n"
-		    "	type - circle, rectangle, triangle \n"
-		    "	num1 - width or radius \n"
-		    "	num2 - length \n";
+class Shape {
+    protected:
+        double width, length;
+    public:
+        Shape(double w, double l = 0) {
+            width = w;
+            length = l;
+        }
 
-int main(int argc, char *argv[]) 
-{
-	double num1 = 0, num2 = 0;
+        virtual double get_area() = 0;
+};
 
-	if (argc < 3) {
-	    cout << usage << endl;
-	    return -1;
-	} else {
-		num1 = atof(argv[2]);
-		if (argc == 4)
-			num2 = atof(argv[3]);
-	}
+class Circle : public Shape {
+    public:
+        Circle(double r) : Shape(r) {}
 
-	Shape *shape;
-	Rectangle rect;
-	/**** Uncomment the code after you create class Circle and Triangle in shapes.h
-	Circle circle;
-	Triangle triangle;
-	****/
+        double get_area() {
+            return M_PI * pow(width, 2);
+        }
+};
 
-    if (strcmp(argv[1], "rectangle") == 0)
-		shape = &rect;
-	/**** Uncomment the code after you create class Circle and Triangle in shapes.h
-	else if (strcmp(argv[1], "triangle") == 0)
-		shape = &triangle;
-	else if (strcmp(argv[1], "circle") == 0)
-		shape = &circle;
-	*****/
-	else {
-		cout << "Error! Unknown shape type" << endl;
-		return -2;
-	}
+class Triangle : public Shape {
+    public:
+        Triangle(double w, double l) : Shape(w, l) {}
 
-	shape->setWidth(num1);
-	shape->setHeight(num2);
-	
-	// Print the area of the object.
-	cout << shape->area() << endl;
+        double get_area() {
+            return 0.5 * width * length;
+        }
+};
 
-	return 0;
+class Rectangle : public Shape {
+    public:
+        Rectangle(double w, double l) : Shape(w, l) {}
+
+        double get_area() {
+            return width * length;
+        }
+};
+
+int main() {
+    double width, length;
+    string shape_type;
+
+    cout << "Enter shape type (circle, triangle, or rectangle)and width/radius : ";
+    cin >> shape_type>>width;
+
+   
+    if (shape_type == "triangle" || shape_type == "rectangle") {
+        cout << "Enter length: ";
+        cin >> length;
+    }
+
+    Shape *shape;
+    if (shape_type == "circle") {
+        shape = new Circle(width);
+    } else if (shape_type == "triangle") {
+        shape = new Triangle(width, length);
+    } else if (shape_type == "rectangle") {
+        shape = new Rectangle(width, length);
+    } else {
+        throw invalid_argument("Invalid shape type");
+    }
+
+    double area = shape->get_area();
+    cout << "Area of " << shape_type << " with width " << width << " and length " << length << " is " << area << endl;
+
+    delete shape;
+
+    return 0; 
 }
+
+
