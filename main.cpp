@@ -68,7 +68,7 @@ int main() {
     }
 
     double area = shape->get_area();
-    cout << "Area of " << shape_type << " with width " << width << " and length " << length << " is " << area << endl;
+    cout  << area << endl;
 
     delete shape;
 
